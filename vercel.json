@@ -1,7 +1,12 @@
 {
+  "functions": {
+    "api/gallery.ts": {
+      "runtime": "nodejs18.x"
+    }
+  },
   "rewrites": [
     {
-      "source": "/((?!api/|_next/|static/|public/|favicon.ico|.*\\\\..*).*)",
+      "source": "/((?!api/|_next/|static/|public/|favicon.ico|.*\\..*).*)",
       "destination": "/index.html"
     }
   ]
