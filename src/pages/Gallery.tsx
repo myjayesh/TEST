@@ -1,8 +1,5 @@
 import { useState, useEffect } from "react";
 
-// Replace with your actual Cloudinary cloud name
-const CLOUD_NAME = "your_cloud_name";
-
 const CATEGORY_TO_FOLDER = {
   "single-ekat": "single-ekat",
   "semi-ekat": "semi-ekat",
@@ -36,22 +33,35 @@ const Gallery = () => {
           const folderKeys = Object.values(CATEGORY_TO_FOLDER);
           const results = await Promise.all(
             folderKeys.map(async (folder) => {
-              const res = await fetch(`/api/gallery?category=${folder}`);
-              if (!res.ok) return [];
-              const data = await res.json();
-              return data.images || [];
+              try {
+                const res = await fetch(`/api/gallery?category=${folder}`);
+                if (!res.ok) {
+                  console.warn(`Failed to fetch from folder: ${folder}`);
+                  return [];
+                }
+                const data = await res.json();
+                return data.images || [];
+              } catch (err) {
+                console.warn(`Error fetching from folder ${folder}:`, err);
+                return [];
+              }
             })
           );
           allImages = results.flat();
         } else {
           // Fetch from selected folder
           const res = await fetch(`/api/gallery?category=${CATEGORY_TO_FOLDER[activeFilter]}`);
-          if (!res.ok) throw new Error("Failed to fetch images");
+          if (!res.ok) {
+            const errorText = await res.text();
+            throw new Error(`Failed to fetch images: ${errorText}`);
+          }
           const data = await res.json();
           allImages = data.images || [];
         }
         setImages(allImages);
+        console.log(`Loaded ${allImages.length} images for category: ${activeFilter}`);
       } catch (err: any) {
+        console.error('Error fetching images:', err);
         setError("Could not load images. Please try again later.");
         setImages([]);
       } finally {
@@ -103,6 +113,12 @@ const Gallery = () => {
         {error && (
           <div className="text-center py-12">
             <p className="text-red-500 text-lg">{error}</p>
+            <button 
+              onClick={() => window.location.reload()} 
+              className="mt-4 px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90"
+            >
+              Retry
+            </button>
           </div>
         )}
 
@@ -118,10 +134,9 @@ const Gallery = () => {
                   animationDelay: `${index * 0.1}s`,
                 }}
               >
-                {/* You can add more metadata here if you store it in Cloudinary */}
                 <div className="absolute inset-0 flex flex-col justify-end p-4">
                   <p className="text-white text-lg font-bold leading-tight">
-                    {/* No price info unless you store it in Cloudinary metadata */}
+                    {/* Add metadata here if needed */}
                   </p>
                 </div>
                 {/* Hover overlay */}
@@ -138,6 +153,9 @@ const Gallery = () => {
         {!loading && !error && images.length === 0 && (
           <div className="text-center py-12">
             <p className="text-muted-foreground text-lg">No items found in this category.</p>
+            <p className="text-sm text-muted-foreground mt-2">
+              Make sure your Cloudinary folders contain images and are named correctly.
+            </p>
           </div>
         )}
       </div>
