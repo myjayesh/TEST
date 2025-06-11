@@ -10,7 +10,14 @@
       "dest": "/api/$1"
     },
     {
-      "src": "/((?!api/|_next/|static/|public/|favicon.ico|.*\\\\..*).*)",
+      "handle": "filesystem"
+    },
+    {
+      "src": "/assets/(.*)",
+      "dest": "/assets/$1"
+    },
+    {
+      "src": "/(.*)",
       "dest": "/index.html"
     }
   ],
