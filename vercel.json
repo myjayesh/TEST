@@ -1,6 +1,6 @@
 {
   "functions": {
-    "api/**/*.ts": {  <-- THIS LINE HAS CHANGED
+    "api/**/*.ts": {  
       "runtime": "@vercel/node@3.0.31"
     }
   },
