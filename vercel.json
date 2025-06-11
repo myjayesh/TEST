@@ -5,15 +5,10 @@
     }
   },
   "routes": [
-    // Rule 1: API routes - this must come first as it's more specific.
-    // It maps requests to /api/anything to the corresponding serverless function.
     {
       "src": "/api/(.*)",
       "dest": "/api/$1"
     },
-    // Rule 2: SPA fallback rewrite - this is your original rewrite, now as a route.
-    // It catches all other requests (that aren't API, _next, static, public, favicon.ico, or direct file paths)
-    // and serves index.html for your client-side React router to handle.
     {
       "src": "/((?!api/|_next/|static/|public/|favicon.ico|.*\\\\..*).*)",
       "dest": "/index.html"
